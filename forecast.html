@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+        crossorigin=""/>
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <title>Tick Alert</title>
+
+    <style>
+        .leaflet-container {
+            background: #fff;
+            outline: 0;
+            border-radius: 5px;
+        }
+    </style>
+
+  </head>
+  <body>
+    <nav class="navbar navbar-light border-0 border-bottom py-1" style="height: 50px;">
+      <div class="container-fluid ">
+        <div class="navbar-brand mb-0 fs-5 fw-bold align-items-center"><span class="text-danger">Tick </span><span>Alert</span><i class="fa-solid fa-shield-dog ms-2"></i> </div>
+        <span class="text-secondary h5">Tick Paralysis Forecast</span>
+			</div>
+    </nav>
+		
+    <div class="container-fluid bg-light main-content pb-1">
+        <div class="row h-100">
+
+            <div class="col-lg-8 h-100 px-1">
+                <div class="py-1 h-100">
+                    <div class="bg-white border px-2 py-1 border-light rounded rounded-3 shadow-sm h-100 " id="forecastcont" >
+                        <div>
+                            <b class="h6 fw-bold heading">Forecasting canine tick paralysis admissions</b>
+                            <p class="m-0 para">'We simulate the tick paralysis admissions time series 10,000 times to see what kinds of trends are possible. The summary below gives an idea of the range of scenarios our model thinks is possible.</p>
+                        </div>
+                        <div class="d-flex flex-row justify-content-end align-items-center">
+                            <p class="my-0 mx-2 h6">Forecast only</p>
+                            <label class="switch ml-2">
+                                <input type="checkbox" id="inclforecast">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        
+                        <div id="forecastspread" style="overflow: visible;z-index: 100000;"></div>
+                        <div>
+                            <b class="fw-bold heading" style="font-size: 1rem !important;">How does the forecast compare to the long-term average?</b>
+                            <!-- <p class="m-0 para">Shown below the forecast are the anomalies for the predicted total each month for the year. <span id="anomaliestext"></span></p> -->
+                        </div>
+                        <div id="forecastanomalies"></div>
+                        
+                    </div>
+                </div>
+
+    
+                
+            </div>
+        
+
+        <div class="col-lg-4 h-100 px-1">
+            <div class="py-1" style="height:10%">
+                <div class="bg-white border px-2 py-1 border-light rounded rounded-3 shadow-sm h-100">
+                    <div class="dropdown">
+                        <button class="btn btn-outline dropdown-toggle w-100 h-100 mt-1" type="button" id="region-selector" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          <span class="h4 m-0" id="regionselectheader">Region</span>
+                        </button>
+                        <div class="dropdown-menu w-100" aria-labelledby="region-selector" id="regionselectoptions">
+                            
+                        </div>
+                      </div>
+                </div>
+            </div>
+            <div class="py-1" style="height:25%">
+                <div class="bg-white border px-2 py-1 border-light rounded rounded-3 shadow-sm h-100" id="percentageworsecont" >
+                    <div>
+                        <b class="h6 fw-bold heading">Chance of an increase in tick cases for next year is <i id="increasechance"></i></b>
+                        <p class="m-0 para"></p>
+                    </div>
+                    <div id="percentageworse"></div>
+                </div>
+            </div>
+            <div class="py-1" style="height:65%">
+                <div class="bg-white border px-2 py-1 border-light rounded rounded-3 shadow-sm h-100" id="thresholdcont" >
+                    <div>
+                        <b class="h6 fw-bold heading">Will tick cases increase beyond a threshold?</b>
+                        <p class="m-0 para">Case threshold:</p>
+                    </div>
+                    <div class="d-inline-flex my-2">
+                        <span>
+                            <!-- <p class="text-secondary small mb-0">Comparison</p> -->
+                            <div class="histoptions border rounded" role="group" aria-label="Threshold Probability"> 
+                                <input type="radio" class="btn-check histradio" name="threshold" id="thresholdone" autocomplete="off" checked>
+                                <label class="px-2 text-secondary" for="thresholdone">3</label>
+                            
+                                <input type="radio" class="btn-check histradio" name="threshold" id="thresholdtwo" autocomplete="off">
+                                <label class="px-2 text-secondary" for="thresholdtwo">6</label>
+                            
+                                <input type="radio" class="btn-check histradio" name="threshold" id="thresholdthree" autocomplete="off">
+                                <label class="px-2 text-secondary" for="thresholdthree">9</label>
+
+                                <input type="radio" class="btn-check histradio" name="threshold" id="thresholdfour" autocomplete="off">
+                                <label class="px-2 text-secondary" for="thresholdfour">12</label>
+                            </div>
+                        </span>
+                    </div>
+                    <div id="thresholdprobability"></div>
+                        
+                </div>
+            </div>
+        </div>
+        </div>
+
+    </div>
+	
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF" crossorigin="anonymous"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="./scripts/script.js"></script>
+    <script src="./scripts/graphs.js"></script>
+    <script src="./scripts/forecast.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+        crossorigin=""></script> 
+        
+    
+    <script>
+        let selected = 0
+        let regiondata
+
+        fetch("./data/predictions.json")
+            .then(response => response.json())
+            .then(data => {
+            
+            regiondata = data
+            $("#regionselectheader").text(regiondata[selected].region[0])
+            data.forEach(v => $("#regionselectoptions").append("<a class='dropdown-item text-center h4' href='#''>" + v.region[0] +"</a>"))
+            populatepage(regiondata[selected].region[0])
+        })
+
+
+        // fetch("./data/thresholds.json")
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         thresholds(data, {
+        //             x: d => d.month,
+        //             y: d => d.prob,
+        //             // xDomain: d3.groupSort(alphabet, ([d]) => -d.frequency, d => d.letter), // sort by descending frequency
+        //             yFormat: "%",
+        //             yLabel: "↑ Frequency",
+        //             // width,
+        //             height: 500,
+        //             color: "#4e79a7"
+        //         })
+        // })
+        
+
+        // forecast(preds, {
+        //     yLabel: "↑ Monthly Total",
+        //     width: 800,
+        //     height: 300,
+        //     color: "#4e79a7",
+        //     div: "#forecastspread"
+        // })
+
+        // forecast(trends, {
+        //     yLabel: "↑ Monthly Total",
+        //     width: 800,
+        //     height: 300,
+        //     color: "#4e79a7",
+        //     div: "#forecasttrends"
+        // })
+        // fetch('./data/aus_lga_map.geojson')
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         let map = L.map('map', {zoomControl: false}).setView([151.2093,-33.8688],zoom = 25),
+        //         vector = L.geoJson(data, {
+        //             onEachFeature: (feature, layer) => {
+        //                 layer.on("click", (e, d) => {
+        //                     console.log(e.target.feature.properties)
+        //                 })
+        //                 layer.on("mouseover", (e, d) => {
+        //                     layer.setStyle({
+        //                         fillColor: "#EC5858"
+        //                     })
+        //                 })
+        //                 layer.on("mouseout", (e, d) => {
+        //                     layer.setStyle({
+        //                         fillColor: "#DCBCBC"
+        //                     })
+        //                 })
+        //             },
+        //             style: {
+        //                 color: "#EC5858",
+        //                 weight: 1,
+        //                 fillColor: "#DCBCBC",
+        //                 fillOpacity: 1
+        //             }
+        //         }).addTo(map); 
+        //         map.fitBounds(vector.getBounds());
+        //         // vector.bindPopup(function (layer) {
+        //         //     return layer.feature.properties.description;
+        //         // }) 
+        //     })
+        //     .catch(error => console.log(error));
+
+        // fetch("./data/forecast_change.json")
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         console.log($("#tickalertsdiv").height())
+
+
+
+        //         forecastchange(data, {
+        //             x: d => new Date(d.date),
+        //             y: d => parseFloat(d.month_change),
+        //             // z: d => d.state,
+        //             height: 480,
+        //             color: "#4e79a7",
+        //             // voronoi // if true, show Voronoi overlay
+        //         })
+
+        //     })
+        //     .catch(error => console.log(error));
+    </script>
+  </body>
+</html>

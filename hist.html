@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+        crossorigin=""/>
+    <link rel="stylesheet" href="./css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <title>Heart Worm Alert</title>
+
+    <style>
+        .leaflet-container {
+            background: #fff;
+            outline: 0;
+            border-radius: 5px;
+        }
+
+        svg {
+            overflow: visible;
+        }
+
+        
+
+    </style>
+
+  </head>
+  <body>
+    <nav class="navbar navbar-light border-0 border-bottom py-1" style="height: 50px;">
+      <div class="container-fluid ">
+        <div class="navbar-brand mb-0 fs-5 fw-bold align-items-center"><span class="text-danger">Heart Worm </span><span>Alert</span><i class="fa-solid fa-shield-dog ms-2"></i> </div>
+        <span class="text-secondary h5">Historic Data Analysis</span>
+			</div>
+    </nav>
+		
+    <div class="container-fluid bg-light main-content pb-1">
+        <div class="row h-100">
+
+            <div class="col-lg-8 h-100 px-1">
+
+                <div class="py-1 h-100">
+                    <div class="bg-white border px-2 py-1 border-light rounded rounded-3 shadow-sm h-100" id="tickcasesdiv" >
+                        <div>
+                            <b class="h6 fw-bold heading">Positive Heart Worm cases over time</b>
+                            <p class="m-0 para">We used natural language processing to identify positive historical cases for HeartWorm from veterinary clinical records. </p>
+                           
+                            <!-- <p class="m-0 para">Spread, overall and across states and regions, of total Vet admissions for dogs suffering paralysis from ticks monthly since 2010 is <span style="color: #4e79a7;" class="fw-bold">seasonal</span>  (September - February). Though the trend is peaking in the early stages, the cumulative change is increasing. </p> -->
+                        </div>
+                        <div class="d-inline-flex my-2  w-100 justify-content-end">
+                            <span>
+                                <!-- <p class="text-secondary small mb-0">Comparison</p> -->
+                                <div class="histoptions border rounded" role="group" aria-label="Tick Admissions Button"> 
+                                    <input type="radio" class="btn-check histradio" name="tickcasecomp" id="tickcasecompoverall" autocomplete="off" checked>
+                                    <label class="px-2 text-secondary" for="tickcasecompoverall">Overall</label>
+                                
+                                    <input type="radio" class="btn-check histradio" name="tickcasecomp" id="tickcasecompstate" autocomplete="off">
+                                    <label class="px-2 text-secondary" for="tickcasecompstate">State</label>
+                                
+                                    <input type="radio" class="btn-check histradio" name="tickcasecomp" id="tickcasecompregion" autocomplete="off">
+                                    <label class="px-2 text-secondary" for="tickcasecompregion">Region</label>
+                                </div>
+                            </span>
+                            
+                            <span style="margin-left: 10px;">
+                                <!-- <p class="text-secondary small mb-0">Type</p> -->
+                                <div class="histoptions border rounded" role="group" aria-label="Basic radio toggle button group"> 
+
+                                    <input type="radio" class="btn-check histradio" name="tickcasetype" id="tickcasetypemonth" autocomplete="off" checked>
+                                    <label class="px-2 text-secondary" for="tickcasetypemonth">Observed</label>
+
+                                    <input type="radio" class="btn-check histradio" name="tickcasetype" id="tickcasetypeyear" autocomplete="off">
+                                    <label class="px-2 text-secondary" for="tickcasetypeyear">Trend</label>
+                                
+                                    <input type="radio" class="btn-check histradio" name="tickcasetype" id="tickcasetypecumulative" autocomplete="off">
+                                    <label class="px-2 text-secondary" for="tickcasetypecumulative">Cumulative</label>
+                                </div>
+                            </span>
+                        </div>
+                        <div class="h-100" id="tickcasescontainer">
+                            <div id="tickcases"></div>
+                        </div>
+                        
+                    </div>
+                </div>
+<!-- 
+                <div class="py-1" style="height:40%">
+                    <div class="bg-white border px-2 py-1 border-light rounded rounded-3 shadow-sm h-100">
+                            <div>
+                                <b class="h6 fw-bold heading">How deviated are monthly total cases?</b>
+                                <p class="m-0 para">The total for each month compared with the long term average of the respective month shows the magnitude of difference per month per year. QLD, particularly Gold Coast, had steep increase during the early stages. </p>
+                            </div>
+                            <div class="d-inline-flex my-2  w-100 justify-content-end">
+                                <span>
+                                    <p class="text-secondary small mb-0">Comparison</p>
+                                    <div class="histoptions border rounded" role="group" aria-label="Tick Admissions Button"> 
+                                        <input type="radio" class="btn-check histradio" name="histanom" id="histanomoverall" autocomplete="off" checked>
+                                        <label class="px-2 text-secondary" for="histanomoverall">Overall</label>
+                                    
+                                        <input type="radio" class="btn-check histradio" name="histanom" id="histanomstate" autocomplete="off">
+                                        <label class="px-2 text-secondary" for="histanomstate">State</label>
+                                    
+                                        <input type="radio" class="btn-check histradio" name="histanom" id="histanomregion" autocomplete="off">
+                                        <label class="px-2 text-secondary" for="histanomregion">Region</label>
+                                    </div>
+                                </span>
+                            </div>
+                            
+                            <div id="tickanomcontainer" class="h-100">
+                                <div id="anom"></div>
+                            </div>
+                        
+                    </div>
+                </div> -->
+                
+                
+            </div>
+        
+
+        <div class="col-lg-4 px-0 py-1 h-100 d-flex flex-column align-items-stretch">
+            <!-- <div class="row px-2 py-1"> -->
+                
+                <!-- <div class="px-1 col-sm-5 d-flex flex-column justify-content-between" style="max-height: 350px;"> -->
+                <!-- <div class="flex-row d-flex justify-content-between mb-1 " style="max-height: 350px;">
+                    <div class="bg-white py-2 border border-light rounded rounded-3 w-100 h-100 shadow-sm mx-1">
+                        <div class="text-center">
+                            <b class="h6 text-secondary">Total Records Analsysed</b>
+                        </div>
+                        <div class="text-center">
+                            <b class="h4 fw-bold heading">22567</b>
+                        </div>
+                    </div>
+                    <div class="bg-white px-2 pt-1 border border-light rounded rounded-3 h-100 shadow-sm mt-1">
+                        <div class="text-center">
+                            <b class="h6 text-secondary">No. of Breeds</b>
+                        </div>
+                        <div class="text-center">
+                            <b class="h4 fw-bold heading">370</b>
+                        </div>
+                    </div>
+                    <div class="bg-white pt-1 border border-light rounded rounded-3 w-100 h-100 shadow-sm mx-1">
+                        <div class="text-center">
+                            <b class="h6 text-secondary">No. of Patients Anlaysed</b>
+                        </div>
+                        <div class="text-center">
+                            <b class="h4 fw-bold heading">2157</b>
+                        </div>
+                    </div>
+                </div> -->
+                    <!-- <div class="bg-white px-2 pt-1 border border-light rounded rounded-3 h-100 shadow-sm pb-2 mt-1">
+                        <div class="text-center">
+                            <b class="h6 text-secondary">Last Record Date</b>
+                        </div>
+                        <div class="text-center">
+                            <b class="h4 fw-bold heading">2017/12/31</b>
+                        </div>
+                    </div> -->
+                <!-- <div class="px-1 col-sm-7"  style="max-height: 350px;"> -->
+                <div class=""  style="max-height: 350px;">
+                    <!-- <div class="bg-white px-2 pt-1 border border-light rounded rounded-3 h-100 shadow-sm pb-2"> -->
+                    <div class="bg-white px-2 pt-1 border border-light rounded rounded-3 shadow-sm pb-2">
+                        <b class="h6 fw-bold heading">Where most cases are found</b>
+                        <div id="topAffected" style="height: 90%;" class=" mt-1 d-flex flex-column justify-content-between"></div>
+                    </div>
+                </div>
+            <div class="py-1 h-100">
+
+                    <div class="bg-white border px-2 py-1 border-light rounded rounded-3 h-100 shadow-sm ">
+                        <div>
+                            <b class="h6 fw-bold heading">Vet admissions for heartworm</b>
+                            <!-- <p class="m-0 para">Monthly total of Vet examination for tick in dogs shows a seasonal pattern. Cumulative change in total is exponential.</p> -->
+                        </div>
+
+                            <div class="d-inline-flex my-2  w-100 justify-content-end">
+                                <span>
+                                    <div class="histoptions border rounded" role="group" aria-label="Tick Admissions Button"> 
+                                        <input type="radio" class="btn-check histradio" name="tickadmcomp" id="tickadmcompoverall" autocomplete="off" checked>
+                                        <label class="px-2 text-secondary" for="tickadmcompoverall">Overall</label>
+                                    
+                                        <input type="radio" class="btn-check histradio" name="tickadmcomp" id="tickadmcompstate" autocomplete="off">
+                                        <label class="px-2 text-secondary" for="tickadmcompstate">State</label>
+                                    
+                                        <input type="radio" class="btn-check histradio" name="tickadmcomp" id="tickadmcompregion" autocomplete="off">
+                                        <label class="px-2 text-secondary" for="tickadmcompregion">Region</label>
+                                    </div>
+                                </span>
+                                
+                                <span style="margin-left: 10px;">
+                                    <div class="histoptions border rounded" role="group" aria-label="Basic radio toggle button group"> 
+
+                                        <input type="radio" class="btn-check histradio" name="tickadmtype" id="tickadmtypemonth" autocomplete="off" checked>
+                                        <label class="px-2 text-secondary" for="tickadmtypemonth">Observed</label>
+
+                                        <input type="radio" class="btn-check histradio" name="tickadmtype" id="tickadmtypeyear" autocomplete="off">
+                                        <label class="px-2 text-secondary" for="tickadmtypeyear">Trend</label>
+                                    
+                                        <input type="radio" class="btn-check histradio" name="tickadmtype" id="tickadmtypecumulative" autocomplete="off">
+                                        <label class="px-2 text-secondary" for="tickadmtypecumulative">Cumulative</label>
+                                    </div>
+                                </span>
+                            </div>
+                            
+                        <div class="h-100" id="tickadmscontainer" >
+                            <div id="tickadmissions"></div>
+                        </div>
+                    </div>
+            </div>
+        <!-- </div> -->
+        </div>
+
+    </div>
+	
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF" crossorigin="anonymous"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="./scripts/graphs.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+        crossorigin=""></script> 
+        
+    <script src="./scripts/script.js"></script>
+    <script src="./scripts/hist.js"></script>
+    <script>
+        let tickcasecomp = "tickcasecompoverall"
+        let tickcasetype = "tickcasetypemonth"
+        let tickadmcomp = "tickadmcompoverall"
+        let tickadmtype = "tickadmtypemonth"
+
+        // fetch("./data/region_totals.json")
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         map(data)
+        //     })
+
+        $( document ).ready(function() {    
+            affectedAreas()
+            tickadmissions(tickadmcomp, tickadmtype)
+            tickcases(tickcasecomp, tickcasetype)
+            // stl("seasonal", "seasonalityoverall")
+            // stl("trend", "trendoverall")
+            anom("anom", "histanomoverall")
+        });
+        
+    </script>
+  </body>
+</html>
