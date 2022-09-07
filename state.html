@@ -12,14 +12,17 @@
         crossorigin=""/>
     <title>Spread Across State</title>
     <style>
-        #map { position: fixed; top:0; bottom: 0; left: 0; right: 00;}
-        .leaflet-container {
-            background: #fff;
-            outline: 0;
-            width: 100%;
+        .map-container { 
+            position: fixed; top:0; bottom: 0; left: 0; right: 0; left:0;
+            background-color: #9bbff4;
+            /* height: calc(100vh - 17px); */
+            padding-right: 10px;
+            padding-left: 10px;
+            /* padding: 10px; */
         }
-        .map-container {
-            background-color: #ddd;
+        #map {
+            background-color: #9bbff4;
+            height: 100%;
         }
         .legend {
             text-align: left;
@@ -40,12 +43,107 @@
             box-shadow: 0 0 15px rgb(0 0 0 / 20%);
             border-radius: 5px;
         }
+        .btn-light:not(:disabled):not(.disabled).active, .btn-light:not(:disabled):not(.disabled):active, .show>.btn-light.dropdown-toggle {
+            color: #fff;
+            background-color: #00A7B9;
+            border: 1px solid #00A7B9 !important;
+        }
+        .focus {
+            box-shadow: none !important;
+        }
+        .percentagebar {
+            height: 30px;
+            background-color: #ddd;
+        }
+        .percentagebar > div {
+            height: 30px;
+        }
     </style>
   </head>
   <body>
 
-    <div class="map-container">
+    <!-- <div class="map-container">
         <div id="map"></div>
+    </div> -->
+
+    <div class="map-container">
+        <!-- <nav class="navbar navbar-light border-0 border-bottom py-1" style="height: 45px;">
+            <div class="container-fluid ">
+                <div class="navbar-brand mb-0 fs-5 fw-bold align-items-center pt-0"><span class="text-danger">Tick </span><span>Alert</span><i class="fa-solid fa-shield-dog ms-2"></i> </div>
+                <span class="text-secondary h5 page-title">Historic Data Analysis</span>
+            </div>
+        </nav> -->
+        <div class="row h-100" style="background-color: #9bbff4;">
+            <div class="col-8 h-100 px-0">
+                <div id="map"></div>
+            </div>
+
+            <div class="col-4 overflow-auto h-100 rounded-left rounded-lg bg-white shadow border">
+                <h6 class=" text-secondary mb-0 mt-2" >Postcode</h6>
+                <h2 class="mt-0"><b id='postcode'></b></h2>
+                <div class="mt-3" id="insights">
+                    <h6 class="mt-0 mb-1 text-secondary">Total Admissions</h6>
+                    <h5 class="text-black" id='postcode-total'></h5>
+                </div>
+
+                <h6 class="mt-3">Heartworm Admissions</h6>
+                <div id="hwadmissions"></div>
+
+                <h6 class="mt-3">Patients divided by Sex</h6>
+                <div class="percentagebar sexbar d-flex"></div>
+                <div class="legend sexbar-legend info">
+                    <i style="background-color:#4e79a7"></i> Male<br>
+                    <i style="background-color:#f28e2b"></i> Female<br>
+                    <i style="background-color:#e15759"></i> NA<br>
+                </div>
+
+                <h6 class="mt-3">Patients divided by Neuter Status</h6>
+                <div class="percentagebar desexbar d-flex"></div>
+                <div class="legend desexbar-legend info">
+                    <i style="background-color:#4e79a7"></i> Entire<br>
+                    <i style="background-color:#f28e2b"></i> Neutered<br>
+                </div>
+
+                <h6 class="mt-3">Patient Age Distributions</h6>
+                <div id="agedist"></div>
+
+            </div>
+            
+            <!-- <div class="col-4 p-2 overflow-auto h-100">
+                <div class="btn-group btn-group-toggle d-flex shadow font-weight-bold" data-toggle="buttons">
+                    <label class="btn btn-light border topopt active">
+                      <input type="radio" name="options" id="option1" checked> Observered
+                    </label>
+                    <label class="btn btn-light border topopt">
+                      <input type="radio" name="options" id="option2"> Trend
+                    </label>
+                    <label class="btn btn-light border topopt">
+                      <input type="radio" name="options" id="option3"> Cumulative
+                    </label>
+                  </div>
+                <div class="card shadow mt-3">
+                    <div class="card-body p-2">
+                        <div class="h-100" style="height:300px" id="tickcasescontainer">
+                            <div id="tickoverall"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card shadow mt-3">
+                    <div class="card-body p-2">
+                        <div class="h-100" style="height:300px" id="tickcasescontainer">
+                            <div id="tickstate"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card shadow mt-3">
+                    <div class="card-body p-2">
+                        <div class="h-100" style="height:300px" id="tickcasescontainer">
+                            <div id="tickregions"></div>
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+        </div>
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
@@ -55,160 +153,7 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
         integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
         crossorigin=""></script> 
-        
-    <!-- <script src="./script.js"></script> -->
-    <script>
-        let postcode_totals;
-
-        fetch('./data/postcode_totals.json')
-            .then(response => response.json())
-            .then(data => {
-                postcode_totals = data
-                postcodes = data.map(i => i.Postcode)
-                console.log(postcodes)
-                fetch('./data/postcode_map.geojson')
-                    .then(response => response.json())
-                    .then(data => {
-                        data = data.features.map(postcode => {
-                            if(postcodes.includes(postcode.properties.POA_CODE16)) {
-                                postcode.properties.total = postcode_totals.filter(i => i.Postcode == postcode.properties.POA_CODE16)[0].n
-                            } else {
-                                postcode.properties.total = NaN
-                            }
-                            return postcode
-                        })
-
-                        let getColor = v => {
-                            return  v > 1000 ? '#800026' :
-                                    v > 500  ? '#BD0026' :
-                                    v > 200  ? '#E31A1C' :
-                                    v > 100  ? '#FC4E2A' :
-                                    v > 50   ? '#FD8D3C' :
-                                    v > 20   ? '#FEB24C' :
-                                    v > 10   ? '#FED976' :
-                                                '#FFEDA0';
-                        }
-                        let maxTotal = Math.max(...postcode_totals.map(i => i.n))
-                        console.log(maxTotal)
-                        let map = L.map('map').setView([147.0967,-36.0406 ], 13),
-                        vector = L.geoJson(data, {
-                            onEachFeature: (feature, layer) => {
-                                let style;
-
-                                
-
-                                let zoomToFeature = (e) => {
-                                    map.fitBounds(e.target.getBounds());
-                                }
-
-                                let highlightFeature = (e) => {
-                                    let layer = e.target;
-
-                                    layer.setStyle({
-                                        weight: 3,
-                                        color: '#777',
-                                        dashArray: '',
-                                        fillOpacity: 0.7
-                                    });
-                                    
-                                    layer.bindTooltip("<div>Postcode:<b>" + feature.properties.POA_NAME16 + "</b><div>Total:<b>" + feature.properties.total + "</b></div></div>").openTooltip();
-
-                                    if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-                                        layer.bringToFront();
-                                    }
-
-                                }
-
-                                let resetHighlight = (e) => {
-                                    let layer = e.target;
-                                    layer.setStyle({
-                                        fillColor: feature.properties.total ? getColor(feature.properties.total) : "#efefef",
-                                        color: "#fff",
-                                        weight: 1,
-                                        fillOpacity: 1
-                                    });
-                                    // geojson.resetStyle(layer)
-                                    layer.closeTooltip()
-                                }
-
-
-                                if(feature.properties.total)  {
-                                    style = {
-                                        // fillColor: "rgba(0, 0, 200, " + (feature.properties.total/maxTotal).toFixed(2)  + ")",
-                                        // color: "rgba(0, 0, 200, " + (feature.properties.total/maxTotal).toFixed(2)  + ")"
-                                        fillColor: getColor(feature.properties.total),
-                                        // color: "#fff",
-                                        // weight: 0.25
-                                    }
-                                } else {
-                                    style = {
-                                        fillColor: "#efefef",
-                                        color: "#fff",                                 
-                                    }
-                                }
-                                layer.setStyle(style)
-                                // AREASQKM20: 256.3162
-                //   console.log(feature.properties)
-                                // layer.bindTooltip("<div>Postcode:<b>" + feature.properties.POA_NAME16 + "</b><div>Total:<b>" + feature.properties.total + "</b></div></div>").openTooltip();
-                                // layer.on("click", (e, d) => {
-                                //     // console.log(e.target.feature.properties.total)
-                                // })
-                                // layer.on("mouseover", (e, d) => {
-                                //     layer.setStyle({
-                                //         fillColor: "rgba(236, 88, 88, " + (e.target.feature.properties.total/maxTotal).toFixed(2)  + ")"
-                                //     })
-                                // })
-                                // layer.on("mouseout", (e, d) => {
-                                //     layer.setStyle({
-                                //         fillColor: "#DCBCBC"
-                                //     })
-                                // })
-                                layer.on({
-                                    mouseover: highlightFeature,
-                                    mouseout: resetHighlight,
-                                    click: zoomToFeature
-                                });
-
-                            },
-                            style: {
-                                // color: "#EC5858",
-                                // color: "#eee",
-                                weight: 0.5,
-                                // fillColor: "#FFF",
-                                color: "#fff",
-                                fillOpacity: 1
-                            }
-                        }).addTo(map); 
-                        
-                        let legend = L.control({position: 'bottomright'});
-
-                        legend.onAdd = function (map) {
-
-                            var div = L.DomUtil.create('div', 'info legend'),
-                                grades = [0, 10, 20, 50, 100, 200, 500, 1000],
-                                labels = [];
-
-                            // loop through our density intervals and generate a label with a colored square for each interval
-                            for (var i = 0; i < grades.length; i++) {
-                                div.innerHTML +=
-                                    '<i style="background-color:' + getColor(grades[i] + 1) + '"></i> ' +
-                                    grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+');
-                            }
-
-                            return div;
-                        };
-
-                        legend.addTo(map);
-                        map.fitBounds(vector.getBounds());
-                        // vector.bindPopup(function (layer) {
-                        //     return layer.feature.properties.description;
-                        // }) 
-                    })
-                    .catch(error => console.log(error));
-            })
-
-        
-       
-    </script>
+        <script src="./scripts/graphs.js"></script>    
+    <script src="./scripts/state.js"></script>
   </body>
 </html>
