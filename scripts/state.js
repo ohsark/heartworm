@@ -2,8 +2,8 @@ let lga_totals;
 let colors = ["#4e79a7", "#f28e2b", "#e15759"]
 
 function populateSide(region) {
-    let pc = region.POA_CODE16
-    $("#postcode").text(pc)
+    let pc = region.POA_CODE16 ? region.POA_CODE16 : "Australia"
+    $("#postcode").text(pc ? pc : "Australia")
     fetch('./data/PostcodeSummaries.json')
         .then(response => response.json())
         .then(data => {
@@ -12,14 +12,38 @@ function populateSide(region) {
     
                     $("#postcode-total").text(p.total)
 
-                    linechart(p.ts, {
+                    linechart(p.tsobs, {
                         x: d => new Date(d.date),
                         y: d => d.count,
                         // z: d => d.strat,
                         height: 300,
                         width: 500,
                         color: "#4e79a7",
-                        div: "#hwadmissions",
+                        div: "#hwadmissionsobs",
+                        xLabel: "Date →",
+                        yLabel: "↑ Count"
+                    })
+
+                    linechart(p.tstrend, {
+                        x: d => new Date(d.date),
+                        y: d => d.count,
+                        // z: d => d.strat,
+                        height: 300,
+                        width: 500,
+                        color: "#4e79a7",
+                        div: "#hwadmissionstrend",
+                        xLabel: "Date →",
+                        yLabel: "↑ Count"
+                    })
+
+                    linechart(p.tscum, {
+                        x: d => new Date(d.date),
+                        y: d => d.count,
+                        // z: d => d.strat,
+                        height: 300,
+                        width: 500,
+                        color: "#4e79a7",
+                        div: "#hwadmissionscum",
                         xLabel: "Date →",
                         yLabel: "↑ Count"
                     })

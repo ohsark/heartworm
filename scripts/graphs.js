@@ -398,7 +398,7 @@ function linechart(data, {
     dot.append("rect")
         .attr("class", "tooltip-line")
         .attr("width", 100)
-        .attr("height", Z[1] == undefined ? 50 : 70)
+        .attr("height", 50)
         .attr("x", -50)
         .attr("y", Z[1] == undefined ? -70 : -90)
         .attr("rx", 4)
@@ -409,23 +409,23 @@ function linechart(data, {
     dot.append("text")
         .attr("class", "tooltip-date")
         .attr("x", -45)
-        .attr("y", -50);
+        .attr("y", -70);
 	
-	dot.append("text")
-        .attr("class", "tooltip-strata")
-        .attr("x", -45)
-        .attr("y", -70)
-		.attr("font-weight", "bold");
+	// dot.append("text")
+  //       .attr("class", "tooltip-strata")
+  //       .attr("x", -45)
+  //       .attr("y", -25)
+		// .attr("font-weight", "bold");
   
     dot.append("text")
         .attr("x", -45)
-        .attr("y", -30)
+        .attr("y", -50)
         .text("Total:");
   
     dot.append("text")
         .attr("class", "tooltip-count")
         .attr("x", 0)
-        .attr("y", -30)
+        .attr("y", -50)
 		.attr("font-weight", "bold");
   
     function pointermoved(event) {
@@ -434,7 +434,7 @@ function linechart(data, {
       path.style("stroke", ([z]) => Z[i] === z ? null : "#ddd").filter(([z]) => Z[i] === z).raise();
       dot.attr("transform", `translate(${xScale(X[i])},${yScale(Y[i])})`);
       dot.select(".tooltip-date").text(months[X[i].getMonth()] + ", " + X[i].getFullYear());
-	  dot.select(".tooltip-strata").text(Z[i]);
+	    //dot.select(".tooltip-strata").text(Z[i]);
       dot.select(".tooltip-count").text(Y[i]);
       svg.property("value", O[i]).dispatch("input", {bubbles: true});
     }
