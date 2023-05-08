@@ -1,103 +1,28 @@
 let lga_totals;
-let colors = ["#4e79a7", "#f28e2b", "#e15759"]
 
 function populateSide(region) {
-    let pc = region.POA_CODE16 ? region.POA_CODE16 : "Australia"
-    $("#postcode").text(pc ? pc : "Australia")
-    fetch('./data/PostcodeSummaries.json')
-        .then(response => response.json())
-        .then(data => {
-            data.filter(p => { 
-                if(p.postcode == pc) {
-    
-                    $("#postcode-total").text(p.total)
-
-                    linechart(p.tsobs, {
-                        x: d => new Date(d.date),
-                        y: d => d.count,
-                        // z: d => d.strat,
-                        height: 300,
-                        width: 500,
-                        color: "#4e79a7",
-                        div: "#hwadmissionsobs",
-                        xLabel: "Date →",
-                        yLabel: "↑ Count"
-                    })
-
-                    linechart(p.tstrend, {
-                        x: d => new Date(d.date),
-                        y: d => d.count,
-                        // z: d => d.strat,
-                        height: 300,
-                        width: 500,
-                        color: "#4e79a7",
-                        div: "#hwadmissionstrend",
-                        xLabel: "Date →",
-                        yLabel: "↑ Count"
-                    })
-
-                    linechart(p.tscum, {
-                        x: d => new Date(d.date),
-                        y: d => d.count,
-                        // z: d => d.strat,
-                        height: 300,
-                        width: 500,
-                        color: "#4e79a7",
-                        div: "#hwadmissionscum",
-                        xLabel: "Date →",
-                        yLabel: "↑ Count"
-                    })
-
-                    let ages = []
-                    for (let i = 0; i < p.age.length; i++) {
-                        for (let j = 0; j < p.age[i].count; j++) {
-                            ages.push(p.age[i].age)
-                        }
-                    }
-
-                    Histogram(ages, {
-                        height: 300,
-                        width: 500,
-                        value: "age",
-                        label: "count",
-                        div: "#agedist"
-                    })
-
-                    $(".sexbar").empty()
-                    p.sex.forEach((e, i) => {
-                        $(".sexbar").append("<div style='background-color:" + colors[i] + ";width:" + (e.count/p.total)*100 + "%;'></div>")   
-                    });
-
-                    $(".desexbar").empty()
-                    p.desexed.forEach((e, i) => {
-                        $(".desexbar").append("<div style='background-color:" + colors[i] + ";width:" + (e.count/p.total)*100 + "%;'></div>")    
-                    });
-                    
-
-                }
-            })
-        })
+    console.log(region)
+    $("#reg-name").text(region.LGA_NAME20)
+    $("#reg-lgacode").text(region.LGA_CODE20)
 }
 
-
-fetch('./data/postcode_totals.json')
+fetch('./data/lga_totals.json')
     .then(response => response.json())
     .then(data => {
-        let postcode_totals = data
-        let postcodes = data.map(i => i.Postcode)
-     
-        fetch('./data/postcode_map.geojson')
+        lga_totals = data
+        lgas = data.map(i => i.LGACode)
+        console.log(lgas)
+        fetch('./data/lga_map.geojson')
             .then(response => response.json())
             .then(data => {
-                data = data.features.map(postcode  => {
-                    if(postcodes.includes(postcode.properties.POA_CODE16)) {
-                        postcode.properties.total = postcode_totals.filter(i => i.Postcode == postcode.properties.POA_CODE16)[0].n
+                data = data.features.map(lga => {
+                    if(lgas.includes(lga.properties.LGA_CODE20)) {
+                        lga.properties.total = lga_totals.filter(i => i.LGACode == lga.properties.LGA_CODE20)[0].total
                     } else {
-                        postcode.properties.total = NaN
+                        lga.properties.total = NaN
                     }
-                    return postcode
+                    return lga
                 })
-    
                 let getColor = v => {
                     return  v > 1000 ? '#800026' :
                             v > 500  ? '#BD0026' :
@@ -109,7 +34,7 @@ fetch('./data/postcode_totals.json')
                                         '#FFEDA0';
                 }
 
-                let maxTotal = Math.max(...postcode_totals.map(i => i.n))
+                let maxTotal = Math.max(...lga_totals.map(i => i.total))
                 console.log(maxTotal)
                 let map = L.map('map').setView([147.0967,-36.0406 ], 13),
                 vector = L.geoJson(data, {
@@ -133,7 +58,7 @@ fetch('./data/postcode_totals.json')
                                 fillOpacity: 0.7
                             });
                             
-                            layer.bindTooltip("<div><b>" + feature.properties.POA_NAME16 + "</b><div>Total:<b>" + feature.properties.total + "</b></div></div>").openTooltip()
+                            layer.bindTooltip("<div><b>" + feature.properties.LGA_NAME20 + "</b><div>Total:<b>" + feature.properties.total + "</b></div></div>").openTooltip()
 
                             if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
                                 layer.bringToFront();
@@ -212,37 +137,44 @@ fetch('./data/postcode_totals.json')
 
                 legend.addTo(map);
 
-                // let myIcon = L.icon({
-                //     iconUrl: './img/placemarker.png',
-                //     iconSize: [25, 25],
+                let myIcon = L.icon({
+                    iconUrl: './img/placemarker.png',
+                    iconSize: [25, 25],
                     
-                // });
+                });
 
                 L.marker([-33.8688, 151.2093], {
+                    icon: myIcon,
                     riseOnHover: true,
                     title: "Sydney"
                 }).addTo(map)
                 L.marker([-27.4705, 153.0260], {
+                    icon: myIcon,
                     riseOnHover: true,
                     title: "Brisbane"
                 }).addTo(map)
                 L.marker([-28.0167, 153.4000], {
+                    icon: myIcon,
                     riseOnHover: true,
                     title: "Gold Coast"
                 }).addTo(map)
                 L.marker([-37.8136, 144.9631], {
+                    icon: myIcon,
                     riseOnHover: true,
                     title: "Melbourne"
                 }).addTo(map)
                 L.marker([-16.9203, 145.7710], {
+                    icon: myIcon,
                     riseOnHover: true,
                     title: "Cairns"
                 }).addTo(map)
                 L.marker([-31.9523, 115.8613], {
+                    icon: myIcon,
                     riseOnHover: true,
                     title: "Perth"
                 }).addTo(map)
                 L.marker([-32.9283, 151.7817], {
+                    icon: myIcon,
                     riseOnHover: true,
                     title: "Newcastle"
                 }).addTo(map)
@@ -254,3 +186,7 @@ fetch('./data/postcode_totals.json')
             })
             .catch(error => console.log(error));
     })
+
+tickcases("tickcasecompoverall", "tickcasetypemonth", "tickoverall")
+tickcases("tickcasecompstate", "tickcasetypemonth", "tickstate")
+tickcases("tickcasecompregion", "tickcasetypemonth", "tickregions")

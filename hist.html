@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
-    <title>Heart Worm Alert</title>
+    <title>Tick Alert</title>
 
     <style>
         .leaflet-container {
@@ -27,16 +27,14 @@
             overflow: visible;
         }
 
-        
-
     </style>
 
   </head>
   <body>
     <nav class="navbar navbar-light border-0 border-bottom py-1" style="height: 50px;">
       <div class="container-fluid ">
-        <div class="navbar-brand mb-0 fs-5 fw-bold align-items-center"><span class="text-danger">Heart Worm </span><span>Alert</span><i class="fa-solid fa-shield-dog ms-2"></i> </div>
-        <span class="text-secondary h5">Historic Data Analysis</span>
+        <div class="navbar-brand mb-0 fs-5 fw-bold align-items-center"><span class="text-danger">Tick </span><span>Alert</span><i class="fa-solid fa-shield-dog ms-2"></i> </div>
+        <span class="text-secondary h5 page-title">Historical Data Analysis</span>
 			</div>
     </nav>
 		
@@ -48,12 +46,12 @@
                 <div class="py-1 h-100">
                     <div class="bg-white border px-2 py-1 border-light rounded rounded-3 shadow-sm h-100" id="tickcasesdiv" >
                         <div>
-                            <b class="h6 fw-bold heading">Positive Heart Worm cases over time</b>
-                            <p class="m-0 para">We used natural language processing to identify positive historical cases for HeartWorm from veterinary clinical records. </p>
+                            <b class="h6 fw-bold heading">Tick paralysis cases over time</b>
+                            <p class="m-0 para">We used natural language processing to identify historical cases of tick paralysis from veterinary clinical records. </p>
                            
                             <!-- <p class="m-0 para">Spread, overall and across states and regions, of total Vet admissions for dogs suffering paralysis from ticks monthly since 2010 is <span style="color: #4e79a7;" class="fw-bold">seasonal</span>  (September - February). Though the trend is peaking in the early stages, the cumulative change is increasing. </p> -->
                         </div>
-                        <div class="d-inline-flex my-2  w-100 justify-content-end">
+                        <div class="d-inline-flex my-2  w-100 justify-content-end graphoptions" >
                             <span>
                                 <!-- <p class="text-secondary small mb-0">Comparison</p> -->
                                 <div class="histoptions border rounded" role="group" aria-label="Tick Admissions Button"> 
@@ -127,32 +125,32 @@
             <!-- <div class="row px-2 py-1"> -->
                 
                 <!-- <div class="px-1 col-sm-5 d-flex flex-column justify-content-between" style="max-height: 350px;"> -->
-                <!-- <div class="flex-row d-flex justify-content-between mb-1 " style="max-height: 350px;">
-                    <div class="bg-white py-2 border border-light rounded rounded-3 w-100 h-100 shadow-sm mx-1">
+                <div class="flex-row d-flex justify-content-between mb-1 " style="max-height: 350px;">
+                    <div class="bg-white py-2 border border-light rounded rounded-3 w-100 shadow-sm mx-1">
                         <div class="text-center">
-                            <b class="h6 text-secondary">Total Records Analsysed</b>
+                            <b class="h6 text-secondary">Admissions screened</b>
                         </div>
                         <div class="text-center">
                             <b class="h4 fw-bold heading">22567</b>
                         </div>
                     </div>
-                    <div class="bg-white px-2 pt-1 border border-light rounded rounded-3 h-100 shadow-sm mt-1">
+                    <!-- <div class="bg-white px-2 pt-1 border border-light rounded rounded-3 h-100 shadow-sm mt-1">
                         <div class="text-center">
                             <b class="h6 text-secondary">No. of Breeds</b>
                         </div>
                         <div class="text-center">
                             <b class="h4 fw-bold heading">370</b>
                         </div>
-                    </div>
-                    <div class="bg-white pt-1 border border-light rounded rounded-3 w-100 h-100 shadow-sm mx-1">
+                    </div> -->
+                    <div class="bg-white pt-1 border border-light rounded rounded-3 w-100 shadow-sm mx-1">
                         <div class="text-center">
-                            <b class="h6 text-secondary">No. of Patients Anlaysed</b>
+                            <b class="h6 text-secondary">Identified paralysis cases</b>
                         </div>
                         <div class="text-center">
-                            <b class="h4 fw-bold heading">2157</b>
+                            <b class="h4 fw-bold heading">14386</b>
                         </div>
                     </div>
-                </div> -->
+                </div>
                     <!-- <div class="bg-white px-2 pt-1 border border-light rounded rounded-3 h-100 shadow-sm pb-2 mt-1">
                         <div class="text-center">
                             <b class="h6 text-secondary">Last Record Date</b>
@@ -162,19 +160,19 @@
                         </div>
                     </div> -->
                 <!-- <div class="px-1 col-sm-7"  style="max-height: 350px;"> -->
-                <div class=""  style="max-height: 350px;">
+                <div class="px-1 mt-1"  style="max-height: 350px;">
                     <!-- <div class="bg-white px-2 pt-1 border border-light rounded rounded-3 h-100 shadow-sm pb-2"> -->
                     <div class="bg-white px-2 pt-1 border border-light rounded rounded-3 shadow-sm pb-2">
                         <b class="h6 fw-bold heading">Where most cases are found</b>
                         <div id="topAffected" style="height: 90%;" class=" mt-1 d-flex flex-column justify-content-between"></div>
                     </div>
                 </div>
-            <div class="py-1 h-100">
+            <!-- <div class="py-1 h-100">
 
                     <div class="bg-white border px-2 py-1 border-light rounded rounded-3 h-100 shadow-sm ">
                         <div>
-                            <b class="h6 fw-bold heading">Vet admissions for heartworm</b>
-                            <!-- <p class="m-0 para">Monthly total of Vet examination for tick in dogs shows a seasonal pattern. Cumulative change in total is exponential.</p> -->
+                            <b class="h6 fw-bold heading">Vet admissions for tick</b>
+                            <p class="m-0 para">Monthly total of Vet examination for tick in dogs shows a seasonal pattern. Cumulative change in total is exponential.</p>
                         </div>
 
                             <div class="d-inline-flex my-2  w-100 justify-content-end">
@@ -210,7 +208,7 @@
                             <div id="tickadmissions"></div>
                         </div>
                     </div>
-            </div>
+            </div> -->
         <!-- </div> -->
         </div>
 

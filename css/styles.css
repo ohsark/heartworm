@@ -3,14 +3,87 @@ body {
   font-family: 'Roboto', sans-serif;
 }
 
-.main-content {
-  position: fixed;top: 50px;right: 0;left: 0;bottom: 0;
+.page-title {
+  margin-bottom: 0px !important;
+}
+
+@media only screen and (min-width:992px) {
+  .main-content {
+    position: fixed;top: 50px;right: 0;left: 0;bottom: 0;
+  }
+  #tickcasescontainer {
+    margin-bottom: 0px;
+  }
+}
+
+@media (max-width:992px) {
+  #tickcasescontainer {
+    height: 400px !important;
+    margin-bottom: -80px;
+  }
+
+  .page-title {
+    font-size: 1.1rem;
+  }
+
+  .graphoptions {
+    display: inline-block !important;
+  }
+
+  #percentageworse {
+    height: 200px !important;
+    
+  }
+
+  #thresholdprobability {
+    height: 300px !important;
+  }
+
+  #forecastspread {
+    height: 350px !important;
+  }
+
+  #forecastanomalies {
+    height: 150px !important;
+  }
+
+}
+
+@media (max-width:576px) {
+  #forecastspread {
+    height: 420px !important;
+  }
+
+  #forecastcont {
+    padding-bottom: 80px !important;
+  }
+
+  #thresholdcont {
+    padding-bottom: 15px !important;
+  }
+
+  #percentageworsecont {
+    padding-bottom: 25px !important;
+  }
+
+  #forecastanomalies {
+    height: 100px !important;
+  }
+
+  .height-0 {
+    height: 100% !important;
+  }
+}
+
+.histoptions {
+  visibility: none;
 }
 
 .histoptions > label {
     font-weight: 500;
     cursor: pointer;
-    font-size: 0.825rem;
+    font-size: 1rem;
+    margin: auto;
 }
 
 .tooltip-line {
@@ -117,4 +190,87 @@ input:checked + .slider:before {
 .card:hover{
   box-shadow: 8px 8px 8px #4e79a720 !important;
   transform:scale(1.05);
+}
+
+
+/* After forecastv2 */
+
+.leaflet-container {
+  background: #fff;
+  outline: 0;
+  border-radius: 5px;
+}
+
+.map-container { 
+  position: fixed; top:0; bottom: 0; left: 0; right: 0; left:0;
+  background-color: #9bbff4;
+  /* height: calc(100vh - 17px); */
+  padding-right: 10px;
+  padding-left: 10px;
+  /* padding: 10px; */
+}
+#map {
+  background-color: #9bbff4;
+  height: 100%;
+}
+.legend {
+  text-align: left;
+  line-height: 18px;
+  color: #555;
+}
+.legend i {
+  width: 18px;
+  height: 18px;
+  float: left;
+  margin-right: 8px;
+  opacity: 0.7;
+}
+.info {
+  padding: 6px 8px;
+  background: white;
+  background: rgba(255,255,255,0.9);
+  box-shadow: 0 0 15px rgb(0 0 0 / 20%);
+  border-radius: 5px;
+}
+
+.legend-risk i {
+  width: 15px;
+  height: 15px;
+  float: left;
+  opacity: 0.7;
+}
+.info-risk {
+  padding: 6px 8px;
+  background: white;
+  background: rgba(255,255,255,0.9);
+  box-shadow: 0 0 15px rgb(0 0 0 / 20%);
+  border-radius: 5px;
+}
+
+
+
+.btn-light:not(:disabled):not(.disabled).active, .btn-light:not(:disabled):not(.disabled):active, .show>.btn-light.dropdown-toggle {
+  color: #fff;
+  background-color: #00A7B9;
+  border: 1px solid #00A7B9 !important;
+}
+.focus {
+  box-shadow: none !important;
+}
+.percentagebar {
+  height: 30px;
+  background-color: #ddd;
+}
+.percentagebar > div {
+  height: 30px;
+}
+
+.name-text {
+  font-size:  12px;
+  paint-order: stroke;
+  stroke: #fff;
+  stroke-width: 1px;
+  stroke-linecap: butt;
+  stroke-linejoin: miter;
+  font-weight: 800;
 }

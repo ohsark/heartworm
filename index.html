@@ -6,71 +6,114 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-		<link rel="stylesheet" href="./css/styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+        crossorigin=""/>
+    <link rel="stylesheet" href="./css/styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
-    <title>Tick Alert</title>
-  </head>
-  <body>
-    <nav class="navbar navbar-light border-0">
-      <div class="container border-bottom pb-2">
-        <div class="navbar-brand mb-0 fs-4 fw-bold align-items-center"><span class="text-danger">Tick </span><span>Alert</span><i class="fa-solid fa-shield-dog ms-2"></i></div>
-				<img src="./img/logo-vc.png" style="max-width: 100px;" alt="">
-			</div>
-    </nav>
-		
-		
-		
-		<div class="container px-5 mb-5">
+    <title>Heartworm Alert</title>
+    <style>
+        input[type="radio"] {
+            display: none
+        }
 
-		
-			<div class="container p-5 mb-4 rounded-3" style="background-image: url('./img/bg.jpg');background-repeat: no-repeat;background-position: center;background-size: cover;">
-				<div style="margin-top: 10rem!important;">
-					<div class="col-md-8 bg-dark px-3 pt-1 pb-2 rounded-2">
-						<h5 class="text-light align-items-center fs-2 d-inline"> A Surveillance System to keep track of ticks amongst dogs in Autralia.</h5>
-					</div>
-					<!-- <button class="btn btn-primary rounded-2 fw-bold mt-2 border-0" type="button" style="background-color: darkcyan;">Launch Dashboard</button> -->
-				</div>
-			</div>
+        .areaoption {
+            font-size: 13px;
+            font-weight: 700;
+        }
+    </style>
+    </head>
+<body>
+ 
+    <div class="map-container">
+        <!-- <nav class="navbar navbar-light border-0 border-bottom py-1" style="height: 45px;">
+            <div class="container-fluid ">
+                <div class="navbar-brand mb-0 fs-5 fw-bold align-items-center pt-0"><span class="text-danger">Tick </span><span>Alert</span><i class="fa-solid fa-shield-dog ms-2"></i> </div>
+                <span class="text-secondary h5 page-title">Historic Data Analysis</span>
+            </div>
+        </nav> -->
+        <div class="row h-100" style="background-color: #9bbff4;">
+            <div class="col-7 h-100 px-0" >
+                <div class="d-flex flex-column bg-white px-2 py-3 rounded-lg rounded shadow" style="z-index: 10000; position: absolute;  top: 10px; left : 10px">
+                    <div class="mb-0 h4 font-weight-bold align-items-center"><span class="text-danger">Heartworm </span><span>Alert</span><i class="fa-solid fa-shield-dog ms-2"></i> </div>
+                    <!-- <span class="text-secondary h6">Tick Paralysis Forecast</span> -->
+                    <span class="text-secondary h6 mt-1 mb-0">Historical positive heartworm cases</span>
+                </div>
 
+                <div id="map"></div>
+            </div>
 
+            <div class="col-5 overflow-auto h-100 rounded-left rounded-lg bg-white shadow border">
+                <div class="mt-1">
+                    <div class="dropdown">
+                        <button class="btn text-left px-0 btn-outline dropdown-toggle w-100 h-100 mt-2" type="button" id="region-selector" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="text-align: left;">
+                            <span class="d-inline-flex flex-column">
+                                <span class="h4 inline-block m-0" id="regionselectheader"></span>
+                                <!-- <span class="h6 inline-block text-secondary font-weight-bold mt-1">LGA : <span id="regionselectlga"></span> -->
+                            </span>
+                        </button>
+                        <div class="dropdown-menu overflow-auto" style="height: 300px" aria-labelledby="region-selector" id="regionselectoptions">
+                            
+                        </div>
+                    </div>
+                    <!-- <h5 class="m-0 fw-bold">Heartworm positive cases overtime</h5> -->
+                    <p class="mt-3" style="font-size: 1.05em;">Number of dogs diagnosed positive for heartworm - <b id="noanimaldiagnosed"></b></p>
+                    
+                    <div id="tickcasescontainer">
+                        <!-- <h6 class="mt-3 text-white rounded-lg bg-dark px-2 py-2">Observed cases</h6> -->
+                        <!-- <p>Yearly counts of unique animals tested positive for heartworm</p> -->
+                        <div class="dropdown">
+                            <button class="btn btn-outline-dark dropdown-toggle mb-2 font-weight-bold" type="button" id="graph_selector" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Total observed positive HW cases
+                            </button>
+                            <div class="dropdown-menu" aria-labelledby="graph_selector" id="graphselectoroptions">
+                              <a class="dropdown-item" href="#" data-type="1">Total observed positive HW cases</a>
+                              <a class="dropdown-item" href="#" data-type="2">Total observed HW tests</a>
+                              <a class="dropdown-item" href="#" data-type="3">Incidence risk per 1000 tests</a>
+                            </div>
+                          </div>
+                        <div id="heartwormcases"></div>
+                    </div>
 
-			<div class=" container mt-3">Ixodes holocyclus and I. cornuatus are endemic tick species responsible for the debilitating and often fatal condition in companion animals known as tick paralysis. Symptoms include loss of appetite, poor mobility and coordination, respiratory problems and death. Both of the causative tick species are distributed along Australia’s east coast and are associated with wet and humid habitats. These distributions coincide with some of Australia’s most populous centres. Encroachment of
-				suburbs into bushland is expected to increase future risks of tick paralysis.Prevention of bites by paralysis ticks relies on mass use of acaricide drugs, equating to millions of dollars spent each year. These require regular application (for topical ointments) or administration and there is growing concern that they are not completely effective. Avoidance of tick-prone areas, particularly during periods of heightened infestation risk, remains a critical control measure.
-			</div>
+                    <!-- <h5 class="mt-5">Number of test taken</h5> -->
+                    <h6 class="mt-3 py-2">How many times animal has been tested for heartworm before getting positively diagnosed?</h6>
+                    
+                    
+                    <table class="table table-sm table-bordered text-center" style="font-size: 0.925em;">
+                        <thead>
+                          <tr>
+                            <th scope="col">Number of Test(s) taken before</th>
+                            <th scope="col">Count of animals</th>
+                          </tr>
+                        </thead>
+                        <tbody id="testtakentable">
+                        </tbody>
+                      </table>
 
-			<h5 class="my-3">Dashboards</h5>
+                </div>
 
-			<div class="container mt-4">
-				<div class="row">
-					<div class="col-md-4">
-						<div class="card rounded-3 shadow pb-3">
-							<a class="card-body text-decoration-none h5 text-dark " href="./hist.html">
-								<div class="card-link card-title">Historic Data</div>
-							</a>
-						</div>
-					</div>
+        </div>
+    </div>
+
 	
-					<div class="col-md-4">
-						<div class="card rounded-3 shadow pb-3">
-							<a class="card-body text-decoration-none h5 text-reset" href="./forecast.html">
-								<div class="card-title">Forecast</div>
-							</a>
-						</div>	
-					</div>
-				</div>
-			
-				
-			</div>
 
-			
-
-		</div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-fQybjgWLrvvRgtW6bFlB7jaZrFsaBXjsOMm/tB9LTS58ONXgqbR9W8oWht/amnpF" crossorigin="anonymous"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="./scripts/script.js"></script>
+    <script src="./scripts/graphs.js"></script>
+    <script src="./scripts/dashboard.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+        crossorigin=""></script> 
+        
+    
+    <script>
+       plotMap()
+    //    plotChart()
+    </script>
   </body>
 </html>
