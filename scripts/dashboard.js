@@ -2,6 +2,7 @@ let SELECTED_AREA = []
 let REGIONS_DATA = []
 let AREA = {}
 let GRAPH_SELECTED = 1
+let VARIABLE_SELECTED = "sex"
 
 function setHeader(region) {
     $("#regionselectheader").text(region)
@@ -14,6 +15,12 @@ $("#regionselectoptions").on("click", "a", e  => {
 $("#graphselectoroptions").on("click", "a", e  => {
     GRAPH_SELECTED = parseInt(e.target.getAttribute("data-type")) 
     plotChart(GRAPH_SELECTED)
+})
+
+$("#variableselectoroptions").on("click", "a", e  => {
+
+    VARIABLE_SELECTED = e.target.getAttribute("data-type")
+    populateTable(VARIABLE_SELECTED)
 })
 
 plotChart = (type) => {
@@ -76,6 +83,21 @@ plotChart = (type) => {
     }
 }
 
+populateTable = (type) => {
+    $("#variable_selector").text($("#variableselectoroptions a[data-type=" + VARIABLE_SELECTED + "]").text())
+    variable = type == "sex" ? "PatientSex" : type == "desex" ? "PatientDesexed" : "PatientBreed"
+    $("#demographics_table").empty()
+    $("#table_title").html(type)
+    AREA[type].forEach(row => {
+        $("#demographics_table").append(`
+            <tr>
+                <td>${row[variable]}</td>
+                <td>${row.n}</td>
+            </tr>
+        `)
+    })
+}
+
 function populatepage(region) {
 
     AREA = REGIONS_DATA.filter(pc => pc.postcode == region)[0]
@@ -84,14 +106,34 @@ function populatepage(region) {
     $("#noanimaldiagnosed").text(AREA.animalsdiagnosed)
 
     plotChart(GRAPH_SELECTED)
+
     Histogram(data = AREA.age, {
-        div: "#agehist"
+        div: "#agehist",
+        label: "age"
+    })
+
+    Histogram(data = AREA.survival, {
+        div: "#survivalhist",
+        label: "month_brackets"
+    })
+
+    HorizontalChart(data = AREA.survival, {
+        div: "#survivalchart"
     })
 
     PieChart(data = AREA.prevention, {
         div: "#preventionpie",
         key: "prevention"
     })
+    // console.log(AREA)
+    // PieChart(data = AREA.symptoms, {
+    //     div: "#symptomspie",
+    //     key: "symptom"
+    // })
+
+    // HorizontalChart(data = AREA.symptoms, {
+    //     div: "#chart"
+    // })
 
     PieChart(data = AREA.treated, {
         div: "#treatmentpie",
@@ -113,25 +155,18 @@ function populatepage(region) {
         `)
     })
 
-    $("#sextable").empty()
-    AREA.sex.forEach(row => {
-        $("#sextable").append(`
-            <tr>
-                <td>${row.PatientSex}</td>
-                <td>${row.n}</td>
-            </tr>
-        `)
-    })
+    // $("#sextable").empty()
 
-    $("#breedtable").empty()
-    AREA.breed.forEach(row => {
-        $("#breedtable").append(`
-            <tr>
-                <td>${row.PatientBreed}</td>
-                <td>${row.n}</td>
-            </tr>
-        `)
-    })
+
+    // $("#breedtable").empty()
+    // AREA.breed.forEach(row => {
+    //     $("#breedtable").append(`
+    //         <tr>
+    //             <td>${row.PatientBreed}</td>
+    //             <td>${row.n}</td>
+    //         </tr>
+    //     `)
+    // })
 
     $("#treatmenttable").empty()
     AREA.treated.forEach(row => {
@@ -147,7 +182,7 @@ function populatepage(region) {
     AREA.symptoms.forEach(row => {
         $("#symptomstable").append(`
             <tr>
-                <td>${row.symptoms}</td>
+                <td>${row.symptom}</td>
                 <td>${row.n}</td>
             </tr>
         `)
@@ -162,6 +197,8 @@ function populatepage(region) {
             </tr>
         `)
     })
+
+    populateTable(VARIABLE_SELECTED)
 
 }
 

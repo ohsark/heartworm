@@ -1465,9 +1465,10 @@ function MultiLineChart(data, {
 }
 
 function Histogram(data, {
-  div
+  div,
+  label
 } = {}) {
-  const width = 600;
+  const width = 700;
   const height = 350;
   const marginTop = 30;
   const marginRight = 0;
@@ -1476,7 +1477,7 @@ function Histogram(data, {
 
   // Declare the x (horizontal position) scale.
   const x = d3.scaleBand()
-      .domain(data.map(function(d) { return d.age; })) // descending frequency
+      .domain(data.map(function(d) { return d[label]; })) // descending frequency
       .range([marginLeft, width - marginRight])
       .padding(0.1);
 
@@ -1499,7 +1500,7 @@ function Histogram(data, {
     .selectAll()
     .data(data)
     .join("rect")
-      .attr("x", (d) => x(d.age))
+      .attr("x", (d) => x(d[label]))
       .attr("y", (d) => y(d.n))
       .attr("height", (d) => y(0) - y(d.n))
       .attr("width", x.bandwidth());
@@ -1513,7 +1514,7 @@ function Histogram(data, {
           .attr("y", marginBottom - 4)
           .attr("fill", "currentColor")
           .attr("text-anchor", "end")
-          .text("Age →"));
+          .text( label == "age"?  "Age →" : "Time brackets"));
 
   // Add the y-axis and label, and remove the domain line.
   svg.append("g")
@@ -1532,7 +1533,7 @@ function Histogram(data, {
 
 function PieChart(data, {div, key}) {
   // Specify the chart’s dimensions.
-  const width = 928;
+  const width = 800;
   const height = Math.min(width, 700);
 
   for(i = 0; i < data.length; i++){
@@ -1605,4 +1606,79 @@ function PieChart(data, {div, key}) {
           .text(d => d.data.n));
 
   return svg.node();
+}
+
+function HorizontalChart(data, {div, label}) {
+    // Specify the chart’s dimensions, based on a bar’s height.
+    const barHeight = 40;
+    const marginTop = 10;
+    const marginRight = 0;
+    const marginBottom = 10;
+    const marginLeft = 100;
+    const width = 500;
+    const height = Math.ceil((data.length + 0.1) * barHeight) + marginTop + marginBottom;
+  
+    // Create the scales.
+    const x = d3.scaleLinear()
+        .domain([0, d3.max(data, d => d.n)])
+        .range([marginLeft, width - marginRight]);
+    
+    const y = d3.scaleBand()
+        .domain(d3.map(data, d => d.month_brackets))
+        .rangeRound([marginTop, height - marginBottom])
+        .padding(0.1);
+  
+    // Create a value format.
+    const format = x.tickFormat(20);
+  
+    // Create the SVG container.
+    d3.select(div).select("svg").remove()
+    const svg = d3.select(div)
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("viewBox", [0, 0, width, height])
+        .attr("style", "max-width: 100%; height: auto; font: 12px sans-serif;");
+    
+    // Append a rect for each letter.
+    svg.append("g")
+        .attr("fill", "steelblue")
+      .selectAll()
+      .data(data)
+      .join("rect")
+        .attr("x", x(0))
+        .attr("y", (d) => y(d.month_brackets))
+        .attr("width", (d) => x(d.n) - x(0))
+        .attr("height", y.bandwidth());
+    
+    // Append a label for each letter.
+    svg.append("g")
+        .attr("fill", "white")
+        .attr("text-anchor", "end")
+      .selectAll()
+      .data(data)
+      .join("text")
+        .attr("x", (d) => x(d.n))
+        .attr("y", (d) => y(d.month_brackets) + y.bandwidth() / 2)
+        .attr("dy", "0.35em")
+        .attr("dx", -4)
+        .text((d) => format(d.n))
+      .call((text) => text.filter(d => x(d.n) - x(0) < 20) // short bars
+        .attr("dx", +4)
+        .attr("fill", "black")
+        .attr("text-anchor", "start"));
+  
+    // Create the axes.
+    // svg.append("g")
+    //     .attr("transform", `translate(0,${marginTop})`)
+    //     .call(d3.axisTop(x).ticks(width / 80))
+    //     .call(g => g.select(".domain").remove())
+        
+  
+    svg.append("g")
+        .attr("transform", `translate(${marginLeft},0)`)
+        .call(d3.axisLeft(y).tickSizeOuter(0))
+        .attr("style", "max-width: 100%; height: auto; font: 16px sans-serif;font-weight: 500");
+  
+    return svg.node();
 }
