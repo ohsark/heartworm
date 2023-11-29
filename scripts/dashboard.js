@@ -84,6 +84,24 @@ function populatepage(region) {
     $("#noanimaldiagnosed").text(AREA.animalsdiagnosed)
 
     plotChart(GRAPH_SELECTED)
+    Histogram(data = AREA.age, {
+        div: "#agehist"
+    })
+
+    PieChart(data = AREA.prevention, {
+        div: "#preventionpie",
+        key: "prevention"
+    })
+
+    PieChart(data = AREA.treated, {
+        div: "#treatmentpie",
+        key: "treatment"
+    })
+
+    PieChart(data = AREA.sex, {
+        div: "#sexpie",
+        key: "PatientSex"
+    })
 
     $("#testtakentable").empty()
     AREA.testtaken.forEach(row => {
@@ -94,7 +112,57 @@ function populatepage(region) {
             </tr>
         `)
     })
-        
+
+    $("#sextable").empty()
+    AREA.sex.forEach(row => {
+        $("#sextable").append(`
+            <tr>
+                <td>${row.PatientSex}</td>
+                <td>${row.n}</td>
+            </tr>
+        `)
+    })
+
+    $("#breedtable").empty()
+    AREA.breed.forEach(row => {
+        $("#breedtable").append(`
+            <tr>
+                <td>${row.PatientBreed}</td>
+                <td>${row.n}</td>
+            </tr>
+        `)
+    })
+
+    $("#treatmenttable").empty()
+    AREA.treated.forEach(row => {
+        $("#treatmenttable").append(`
+            <tr>
+                <td>${row.treatment}</td>
+                <td>${row.n}</td>
+            </tr>
+        `)
+    })
+
+    $("#symptomstable").empty()
+    AREA.symptoms.forEach(row => {
+        $("#symptomstable").append(`
+            <tr>
+                <td>${row.symptoms}</td>
+                <td>${row.n}</td>
+            </tr>
+        `)
+    })
+
+    $("#preventiontable").empty()
+    AREA.prevention.forEach(row => {
+        $("#preventiontable").append(`
+            <tr>
+                <td>${row.prevention}</td>
+                <td>${row.n}</td>
+            </tr>
+        `)
+    })
+
 }
 
 plotMap = () => {
